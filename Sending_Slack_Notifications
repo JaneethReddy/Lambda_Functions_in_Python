@@ -4,17 +4,16 @@ from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 import logging
 
-slack_webhook_url = ""
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
-    
-    print(event)
-    
+
+    slack_webhook_url = os.environ['SLACK_WEBHOOK_URL']
+    slack_channel_id = os.environ['SLACK_CHANNEL_ID']
     slack_message = {
-        "channel": "#channel_name",
-        "text": event['test']
+        "channel": slack_channel_id,
+        "text": "Insert Message Here"
         }
 
     print(slack_message)
