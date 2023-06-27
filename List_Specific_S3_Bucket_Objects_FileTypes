@@ -1,0 +1,28 @@
+import boto3
+import json
+import pathlib
+
+
+source_bucket = 'janeeth-s3-source'
+
+def lambda_handler(event, context):
+    # # Get the bucket and object key from the Event
+    s3_client = boto3.client('s3')
+    source_prefix = ""
+    response = s3_client.list_objects_v2(
+        Bucket= source_bucket,
+        Prefix= source_prefix
+    )
+    
+    source_keys = []
+    final_list = []
+    for object in response["Contents"]:
+      source_keys.append(object["Key"])
+    for key in source_keys:
+        file_extension = pathlib.Path(key).suffix
+        print(key)
+        print(file_extension)
+        if file_extension == '.tf':
+            final_list.append(key)
+    print(final_list)
+    return final_list
