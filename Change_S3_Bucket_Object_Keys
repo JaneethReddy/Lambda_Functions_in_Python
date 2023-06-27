@@ -1,0 +1,44 @@
+import json
+import boto3
+import time, urllib
+
+def lambda_handler(event, context):
+    #print(event)
+    # TODO implement
+    s3_client = boto3.client('s3')
+    source_bucket = "janeeth-s3-source"
+    source_prefix = "inside/path/"
+   
+    response = s3_client.list_objects_v2(
+        Bucket= source_bucket,
+        Prefix= source_prefix
+    )
+    
+    source_keys = []
+    for object in response["Contents"]:
+      source_keys.append(object["Key"])
+    
+    source_keys.remove(source_prefix)
+    
+    substring_to_remove = "inside/path/"
+    prefix_to_add = "test/dest_path/"
+
+    destination_keys = []
+    for original_key in source_keys:
+        result_string = ""
+        result_string = original_key.replace(substring_to_remove, "")
+        result_string = prefix_to_add + result_string
+        destination_keys.append(result_string)
+    
+    print("source_keys: ",source_keys)
+    
+    print("destination_keys: ",destination_keys)
+    
+    dict_keys= ["source_keys", "destination_keys"]  
+    
+    final_dict = {  "source_keys" : source_keys,
+                    "destination_keys" : destination_keys            
+    }
+    
+    print("json: ", json.dumps(final_dict))
+    return json.dumps(final_dict)
